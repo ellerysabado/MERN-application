@@ -11,7 +11,7 @@ const host = "localhost";
 const { MongoClient } = require("mongodb");
 
 const url = "mongodb://127.0.0.1:27017";
-const dbName = "secoms319";
+const dbName = "reactdata";
 const client = new MongoClient(url);
 const db = client.db(dbName);
 
@@ -20,7 +20,7 @@ const db = client.db(dbName);
     console.log("Node connected successfully to GET MongoDB");
     const query = {};
     const results = await db
-        .collection("product")
+        .collection("fakestore_catalog")
         .find(query)
         .limit(100)
         .toArray();
@@ -34,7 +34,7 @@ app.get("/:id", async (req, res) => {
       const productid = Number(req.params.id);
       console.log("product to find: ", productid);
       const query = {"id": productid };
-      const result = await db.collection("product").findOne(query);
+      const result = await db.collection("fakestore_catalog").findOne(query);
       if (!result){
           res.status(404).send("Not Found");
       }
@@ -66,12 +66,12 @@ app.post("/addProducts", async (req, res) => {
           "rating": values[6],
       };
 
-      const existingDoc = await db.collection("product").findOne({ "id": newDocument.id });
+      const existingDoc = await db.collection("fakestore_catalog").findOne({ "id": newDocument.id });
       if (existingDoc) {
           return res.status(409).send({ error: 'Conflict: a product with this ID already exists' });
       }
 
-      const results = await db.collection("product").insertOne(newDocument);
+      const results = await db.collection("fakestore_catalog").insertOne(newDocument);
       res.status(200).send(results);
   } catch (error) {
       console.error('Error adding new product:', error);
@@ -89,7 +89,7 @@ app.delete("/deleteproduct/:id", async (req, res) => {
       const query = {id: id};
 
       //delete
-      const results = await db.collection("product").deleteOne(query);
+      const results = await db.collection("fakestore_catalog").deleteOne(query);
       res.status(200);
       res.send(results);
   }
@@ -118,7 +118,7 @@ app.put("/updateproduct/:id", async (req, res) => {
   };
   // Add options if needed, for example { upsert: true } to create a document if it doesn't exist
   const options = { };
-  const results = await db.collection("product").updateOne(query, updateData, options);
+  const results = await db.collection("fakestore_catalog").updateOne(query, updateData, options);
   res.status(200);
   res.send(results);
   });
